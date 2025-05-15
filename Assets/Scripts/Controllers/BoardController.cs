@@ -69,6 +69,14 @@ public class BoardController : MonoBehaviour
         }
     }
 
+    private Cell GetBonusConvertCell(List<Cell> matches, Cell c1, Cell c2)
+    {
+        if (matches.Contains(c2)) return c2;
+        if (matches.Contains(c1)) return c1;
+
+        // fallback: lấy cell trung tâm của match
+        return matches[matches.Count / 2];
+    }
 
     public void Update()
     {
@@ -139,10 +147,13 @@ public class BoardController : MonoBehaviour
 
     private void FindMatchesAndCollapse(Cell cell1, Cell cell2)
     {
-        if (cell1.Item is BonusItem)
+        if (cell1.Item is BonusItem || cell2.Item is BonusItem)
         {
-            cell1.ExplodeItem();
-            StartCoroutine(ShiftDownItemsCoroutine());
+            List<Cell> start = new List<Cell>();
+            if (cell1.Item is BonusItem) start.Add(cell1);
+            if (cell2.Item is BonusItem) start.Add(cell2);
+
+            CollapseMatches(start, null); // gom bonus và các cell liên quan
         }
         else if (cell2.Item is BonusItem)
         {
@@ -171,7 +182,8 @@ public class BoardController : MonoBehaviour
             {
                 OnMoveEvent();
 
-                CollapseMatches(matches, cell2);
+                Cell cellToConvert = GetBonusConvertCell(matches, cell1, cell2);
+                CollapseMatches(matches, cellToConvert);
             }
         }
     }
@@ -219,12 +231,35 @@ public class BoardController : MonoBehaviour
 
     private void CollapseMatches(List<Cell> matches, Cell cellEnd)
     {
-        for (int i = 0; i < matches.Count; i++)
+        HashSet<Cell> totalToExplode = new HashSet<Cell>();
+        Queue<Cell> queue = new Queue<Cell>(matches);
+
+        while (queue.Count > 0)
         {
-            matches[i].ExplodeItem();
+            Cell current = queue.Dequeue();
+            if (current == null || totalToExplode.Contains(current)) continue;
+
+            totalToExplode.Add(current);
+
+            if (current.Item is BonusItem bonus)
+            {
+                List<Cell> affected = bonus.GetAffectedCells();
+                foreach (var affectedCell in affected)
+                {
+                    if (affectedCell != null && !totalToExplode.Contains(affectedCell))
+                    {
+                        queue.Enqueue(affectedCell);
+                    }
+                }
+            }
         }
 
-        if(matches.Count > m_gameSettings.MatchesMin)
+        foreach (var cell in totalToExplode)
+        {
+            cell.ExplodeItem();
+        }
+
+        if (matches.Count >= m_gameSettings.MatchesMin)
         {
             m_board.ConvertNormalToBonus(matches, cellEnd);
         }

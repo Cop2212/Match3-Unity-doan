@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class BonusItem : Item
@@ -44,35 +42,36 @@ public class BonusItem : Item
     internal override bool IsSameType(Item other)
     {
         BonusItem it = other as BonusItem;
-
         return it != null && it.ItemType == this.ItemType;
     }
 
     internal override void ExplodeView()
     {
-        ActivateBonus();
-
-        base.ExplodeView();
+        base.ExplodeView(); // chạy hiệu ứng nổ
     }
 
-    private void ActivateBonus()
+    // ✅ Hàm để xác định các ô bị ảnh hưởng (gom cell trước khi nổ toàn cục)
+    public List<Cell> GetAffectedCells()
     {
+        List<Cell> list = new List<Cell>();
+
         switch (ItemType)
         {
             case eBonusType.HORIZONTAL:
-                ExplodeHorizontalLine();
+                list = GetHorizontalAffectedCells();
                 break;
             case eBonusType.VERTICAL:
-                ExplodeVerticalLine();
+                list = GetVerticalAffectedCells();
                 break;
             case eBonusType.ALL:
-                ExplodeBomb();
+                list = GetBombAffectedCells();
                 break;
-
         }
+
+        return list;
     }
 
-    private void ExplodeBomb()
+    private List<Cell> GetBombAffectedCells()
     {
         List<Cell> list = new List<Cell>();
         if (Cell.NeighbourBottom) list.Add(Cell.NeighbourBottom);
@@ -80,94 +79,53 @@ public class BonusItem : Item
         if (Cell.NeighbourLeft)
         {
             list.Add(Cell.NeighbourLeft);
-            if (Cell.NeighbourLeft.NeighbourUp)
-            {
-                list.Add(Cell.NeighbourLeft.NeighbourUp);
-            }
-            if (Cell.NeighbourLeft.NeighbourBottom)
-            {
-                list.Add(Cell.NeighbourLeft.NeighbourBottom);
-            }
+            if (Cell.NeighbourLeft.NeighbourUp) list.Add(Cell.NeighbourLeft.NeighbourUp);
+            if (Cell.NeighbourLeft.NeighbourBottom) list.Add(Cell.NeighbourLeft.NeighbourBottom);
         }
         if (Cell.NeighbourRight)
         {
             list.Add(Cell.NeighbourRight);
-            if (Cell.NeighbourRight.NeighbourUp)
-            {
-                list.Add(Cell.NeighbourRight.NeighbourUp);
-            }
-            if (Cell.NeighbourRight.NeighbourBottom)
-            {
-                list.Add(Cell.NeighbourRight.NeighbourBottom);
-            }
+            if (Cell.NeighbourRight.NeighbourUp) list.Add(Cell.NeighbourRight.NeighbourUp);
+            if (Cell.NeighbourRight.NeighbourBottom) list.Add(Cell.NeighbourRight.NeighbourBottom);
         }
-
-        for (int i = 0; i < list.Count; i++)
-        {
-            list[i].ExplodeItem();
-        }
+        return list;
     }
 
-    private void ExplodeVerticalLine()
+    private List<Cell> GetVerticalAffectedCells()
     {
         List<Cell> list = new List<Cell>();
-
         Cell newcell = Cell;
-        while (true)
-        {
-            Cell next = newcell.NeighbourUp;
-            if (next == null) break;
 
-            list.Add(next);
-            newcell = next;
+        while ((newcell = newcell.NeighbourUp) != null)
+        {
+            list.Add(newcell);
         }
 
         newcell = Cell;
-        while (true)
+        while ((newcell = newcell.NeighbourBottom) != null)
         {
-            Cell next = newcell.NeighbourBottom;
-            if (next == null) break;
-
-            list.Add(next);
-            newcell = next;
+            list.Add(newcell);
         }
 
-
-        for (int i = 0; i < list.Count; i++)
-        {
-            list[i].ExplodeItem();
-        }
+        return list;
     }
 
-    private void ExplodeHorizontalLine()
+    private List<Cell> GetHorizontalAffectedCells()
     {
         List<Cell> list = new List<Cell>();
-
         Cell newcell = Cell;
-        while (true)
-        {
-            Cell next = newcell.NeighbourRight;
-            if (next == null) break;
 
-            list.Add(next);
-            newcell = next;
+        while ((newcell = newcell.NeighbourRight) != null)
+        {
+            list.Add(newcell);
         }
 
         newcell = Cell;
-        while (true)
+        while ((newcell = newcell.NeighbourLeft) != null)
         {
-            Cell next = newcell.NeighbourLeft;
-            if (next == null) break;
-
-            list.Add(next);
-            newcell = next;
+            list.Add(newcell);
         }
 
-
-        for (int i = 0; i < list.Count; i++)
-        {
-            list[i].ExplodeItem();
-        }
-
+        return list;
     }
 }
