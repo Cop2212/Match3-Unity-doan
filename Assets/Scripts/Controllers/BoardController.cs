@@ -263,6 +263,7 @@ public class BoardController : MonoBehaviour
         if (matches.Count >= m_gameSettings.MatchesMin)
         {
             m_board.ConvertNormalToBonus(matches, cellEnd);
+            AudioManager.Instance.PlayMatchSFX();
         }
 
         if (!m_gameOver)
@@ -279,6 +280,8 @@ public class BoardController : MonoBehaviour
     private IEnumerator ShiftDownItemsCoroutine()
     {
         m_board.ShiftDownItems();
+
+        AudioManager.Instance.PlayMoveDownSFX();
 
         yield return new WaitForSeconds(0.2f);
 

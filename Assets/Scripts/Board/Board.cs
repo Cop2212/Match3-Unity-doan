@@ -180,6 +180,7 @@ public class Board
 
         item.View.DOMove(cell2.transform.position, 0.3f);
         item2.View.DOMove(cell1.transform.position, 0.3f).OnComplete(() => { if (callback != null) callback(); });
+        AudioManager.Instance.PlaySwapSFX();
     }
 
     public List<Cell> GetHorizontalMatches(Cell cell)

@@ -74,6 +74,8 @@ public class Cell : MonoBehaviour
 
         Item.ExplodeView();
         Item = null;
+
+        AudioManager.Instance.PlayMatchSFX();
     }
 
     internal void AnimateItemForHint()

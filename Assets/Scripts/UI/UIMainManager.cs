@@ -30,6 +30,11 @@ public class UIMainManager : MonoBehaviour
         m_gameManager.SetState(GameManager.eStateGame.MAIN_MENU);
     }
 
+    internal void ShowSettingMenu()
+    {
+        ShowMenu<UIPanelSetting>();
+    }
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -59,9 +64,11 @@ public class UIMainManager : MonoBehaviour
                 break;
             case GameManager.eStateGame.MAIN_MENU:
                 ShowMenu<UIPanelMain>();
+                AudioManager.Instance.PlayHomeBGM();
                 break;
             case GameManager.eStateGame.GAME_STARTED:
                 ShowMenu<UIPanelGame>();
+                AudioManager.Instance.PlayGameBGM();
                 break;
             case GameManager.eStateGame.PAUSE:
                 ShowMenu<UIPanelPause>();
@@ -77,14 +84,14 @@ public class UIMainManager : MonoBehaviour
         for (int i = 0; i < m_menuList.Length; i++)
         {
             IMenu menu = m_menuList[i];
-            if(menu is T)
+            if (menu is T)
             {
                 menu.Show();
             }
             else
             {
                 menu.Hide();
-            }            
+            }
         }
     }
 
@@ -118,4 +125,14 @@ public class UIMainManager : MonoBehaviour
     {
         m_gameManager.SetState(GameManager.eStateGame.GAME_STARTED);
     }
+
+    internal void QuitGame()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+    Application.Quit();
+#endif
+    }
+
 }

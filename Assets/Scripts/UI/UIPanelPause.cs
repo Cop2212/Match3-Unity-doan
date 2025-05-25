@@ -6,23 +6,32 @@ using UnityEngine.UI;
 
 public class UIPanelPause : MonoBehaviour, IMenu
 {
+    [SerializeField] private Button btnHome;
     [SerializeField] private Button btnClose;
 
     private UIMainManager m_mngr;
 
     private void Awake()
     {
+        btnHome.onClick.AddListener(OnClickHome);
         btnClose.onClick.AddListener(OnClickClose);
     }
 
     private void OnDestroy()
     {
+        if (btnHome) btnHome.onClick.RemoveAllListeners();
         if (btnClose) btnClose.onClick.RemoveAllListeners();
     }
 
     public void Setup(UIMainManager mngr)
     {
         m_mngr = mngr;
+    }
+
+    private void OnClickHome()
+    {
+        // Chuyển về Main Menu
+        m_mngr.ShowMainMenu();
     }
 
     private void OnClickClose()

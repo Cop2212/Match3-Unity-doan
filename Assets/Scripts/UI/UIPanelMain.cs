@@ -10,6 +10,9 @@ public class UIPanelMain : MonoBehaviour, IMenu
 
     [SerializeField] private Button btnMoves;
 
+    [SerializeField] private Button btnSetting;
+    [SerializeField] private Button btnQuit;
+
     private UIMainManager m_mngr;
 
     private void Awake()
@@ -27,6 +30,18 @@ public class UIPanelMain : MonoBehaviour, IMenu
     public void Setup(UIMainManager mngr)
     {
         m_mngr = mngr;
+        btnSetting.onClick.AddListener(OnClickSetting);
+        btnQuit.onClick.AddListener(OnClickQuit);
+    }
+
+    private void OnClickSetting()
+    {
+        m_mngr.ShowSettingMenu();
+    }
+
+    private void OnClickQuit()
+    {
+        m_mngr.QuitGame();
     }
 
     private void OnClickTimer()
