@@ -173,11 +173,11 @@ public class BoardController : MonoBehaviour
 
             if (matches.Count < m_gameSettings.MatchesMin)
             {
-                IsBusy = false;
-                //m_board.Swap(cell1, cell2, () =>
-                //{
-                //    IsBusy = false;
-                //});
+                //IsBusy = false;
+                m_board.Swap(cell1, cell2, () =>
+                {
+                    IsBusy = false;
+                });
             }
             else
             {
