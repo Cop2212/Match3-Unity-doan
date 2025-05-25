@@ -259,7 +259,7 @@ public class Board
     internal void ConvertNormalToBonus(List<Cell> matches, Cell cellToConvert)
     {
         eMatchDirection dir = GetMatchDirection(matches);
-        if (dir == eMatchDirection.NONE || matches == null || matches.Count < m_matchMin)
+        if (dir == eMatchDirection.NONE || matches == null || matches.Count < m_matchMin || matches.Count == 3)
             return;
 
         BonusItem item = new BonusItem();

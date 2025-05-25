@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class BoardController : MonoBehaviour
@@ -262,6 +263,14 @@ public class BoardController : MonoBehaviour
         if (matches.Count >= m_gameSettings.MatchesMin)
         {
             m_board.ConvertNormalToBonus(matches, cellEnd);
+        }
+
+        if (!m_gameOver)
+        {
+            int scorePerItem = 10;
+            int earnedScore = totalToExplode.Count * scorePerItem;
+
+            GameManager.Instance.scoreManager.AddScore(earnedScore);
         }
 
         StartCoroutine(ShiftDownItemsCoroutine());

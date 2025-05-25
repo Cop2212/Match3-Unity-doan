@@ -6,6 +6,10 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager Instance { get; private set; }
+
+    public ScoreManager scoreManager { get; private set; }
+
     public event Action<eStateGame> StateChangedAction = delegate { };
 
     public enum eLevelMode
@@ -47,6 +51,10 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        Instance = this;
+
+        scoreManager = new ScoreManager();
+
         State = eStateGame.SETUP;
 
         m_gameSettings = Resources.Load<GameSettings>(Constants.GAME_SETTINGS_PATH);
@@ -83,6 +91,8 @@ public class GameManager : MonoBehaviour
 
     public void LoadLevel(eLevelMode mode)
     {
+        scoreManager.ResetScore();
+
         m_boardController = new GameObject("BoardController").AddComponent<BoardController>();
         m_boardController.StartGame(this, m_gameSettings);
 

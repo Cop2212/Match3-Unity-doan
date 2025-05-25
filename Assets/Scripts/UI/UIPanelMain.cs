@@ -15,7 +15,7 @@ public class UIPanelMain : MonoBehaviour, IMenu
     private void Awake()
     {
         btnMoves.onClick.AddListener(OnClickMoves);
-        btnTimer.onClick.AddListener(OnClickTimer);
+        //btnTimer.onClick.AddListener(OnClickTimer);
     }
 
     private void OnDestroy()

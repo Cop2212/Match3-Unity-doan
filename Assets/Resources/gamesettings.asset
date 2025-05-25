@@ -15,6 +15,6 @@ MonoBehaviour:
   BoardSizeX: 10
   BoardSizeY: 10
   MatchesMin: 3
-  LevelMoves: 100
+  LevelMoves: 20
   LevelTime: 30
   TimeForHint: 5
